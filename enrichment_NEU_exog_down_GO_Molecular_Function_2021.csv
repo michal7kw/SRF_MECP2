@@ -1,0 +1,4 @@
+Gene_set,Term,Overlap,P-value,Adjusted P-value,Old P-value,Old Adjusted P-value,Odds Ratio,Combined Score,Genes
+GO_Molecular_Function_2021,outward rectifier potassium channel activity (GO:0015271),3/11,2.540400260486493e-06,0.000175287617973568,0,0,155.7890625,2007.05992175092,KCND2;KCNT2;KCNK2
+GO_Molecular_Function_2021,voltage-gated potassium channel activity (GO:0005249),4/82,5.663796719415831e-05,0.0019540098681984,0,0,21.68139661756683,212.0187133488697,KCNJ6;KCNT2;KCND2;KCNK2
+GO_Molecular_Function_2021,potassium channel activity (GO:0005267),3/91,0.0016203425886993,0.0372678795400858,0,0,14.105823863636363,90.6315782632157,KCNT2;KCND2;KCNK2

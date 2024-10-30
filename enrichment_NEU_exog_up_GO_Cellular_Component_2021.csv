@@ -1,0 +1,2 @@
+Gene_set,Term,Overlap,P-value,Adjusted P-value,Old P-value,Old Adjusted P-value,Odds Ratio,Combined Score,Genes
+GO_Cellular_Component_2021,intrinsic component of synaptic vesicle membrane (GO:0098563),2/17,0.00027238264049152136,0.0128019841031015,0,0,98.54814814814814,808.9130318769513,RAB26;TMEM163

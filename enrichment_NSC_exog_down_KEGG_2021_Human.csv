@@ -1,0 +1,2 @@
+Gene_set,Term,Overlap,P-value,Adjusted P-value,Old P-value,Old Adjusted P-value,Odds Ratio,Combined Score,Genes
+KEGG_2021_Human,Purine metabolism,8/129,6.42806009819498e-05,0.0103491767580939,0,0,6.470128695366144,62.45131696020694,NT5C;NT5C3B;NT5E;PGM2;NME4;ITPA;PGM1;APRT
