@@ -1,0 +1,7 @@
+SampleID,Tissue,Factor,Condition,Replicate,bamReads,Peaks,PeakCaller
+NeuM2,Neuron,Endo,Endogenous,2,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NeuM2.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NeuM2_peaks.narrowPeak,narrow
+NeuM3,Neuron,Endo,Endogenous,3,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NeuM3.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NeuM3_peaks.narrowPeak,narrow
+NSCM1,NSC,Endo,Endogenous,1,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCM1.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCM1_peaks.narrowPeak,narrow
+NSCM2,NSC,Endo,Endogenous,2,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCM2.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCM2_peaks.narrowPeak,narrow
+NSCM3,NSC,Endo,Endogenous,3,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCM3.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCM3_peaks.narrowPeak,narrow
+IgM,Unknown,IgG,Control,1,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/IgM.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/IgM_peaks.narrowPeak,narrow

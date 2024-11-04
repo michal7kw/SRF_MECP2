@@ -1,0 +1,7 @@
+SampleID,Tissue,Factor,Condition,Replicate,bamReads,Peaks,PeakCaller
+NeuV1,Neuron,Virus,Exogenous,1,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NeuV1.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NeuV1_peaks.narrowPeak,narrow
+NeuV2,Neuron,Virus,Exogenous,2,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NeuV2.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NeuV2_peaks.narrowPeak,narrow
+NeuV3,Neuron,Virus,Exogenous,3,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NeuV3.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NeuV3_peaks.narrowPeak,narrow
+NSCv1,NSC,Virus,Exogenous,1,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCv1.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCv1_peaks.narrowPeak,narrow
+NSCv2,NSC,Virus,Exogenous,2,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCv2.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCv2_peaks.narrowPeak,narrow
+NSCv3,NSC,Virus,Exogenous,3,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/aligned/NSCv3.bam,/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_ChipSeq/custom_pipeline/results/peaks/NSCv3_peaks.narrowPeak,narrow
