@@ -18,8 +18,8 @@ DONE_FILE="/beegfs/scratch/ric.broccoli/kubacki.michal/SRF_MECP2/metaprofiles_co
 
 # Run the first script
 python metaprofiles_opt_conditions.py \
-    --gtf-file gencode.vM10.annotation.gtf.gz \
-    --genome-size-file mm10.chrom.sizes \
+    --gtf-file ./DATA/gencode.vM10.annotation.gtf.gz \
+    --genome-size-file ./DATA/mm10.chrom.sizes \
     --output-dir metaprofile_results_conditions \
     --max-cores 32
 

@@ -175,8 +175,8 @@ def main(args):
     # Process tissues
     tissues = ['Neuron', 'NSC'] if not args.test_run else ['Neuron']
     deseq_files = {
-        'Neuron': 'DEA_NEU.csv',
-        'NSC': 'DEA_NSC.csv'
+        'Neuron': './DATA/DEA_NEU.csv',
+        'NSC': './DATA/DEA_NSC.csv'
     }
     
     # Calculate resource allocation
@@ -201,8 +201,8 @@ def main(args):
         tissue_data[tissue] = {'gene_sets': gene_sets, 'bed_files': bed_files}
     
     # Read both sample sheets
-    samples_endo = pd.read_csv("ENDOGENOUS_sample_sheet.csv")
-    samples_exo = pd.read_csv("EXOGENOUS_sample_sheet.csv")
+    samples_endo = pd.read_csv("./DATA/ENDOGENOUS_sample_sheet.csv")
+    samples_exo = pd.read_csv("./DATA/EXOGENOUS_sample_sheet.csv")
     
     # Convert BAM to BigWig for both conditions
     bigwig_dir = f"{args.output_dir}/bigwig"
@@ -244,7 +244,9 @@ def main(args):
             else:
                 logging.info(f"Profile already exists for {tissue}_{category}, skipping")
     
-    with ProcessPoolExecutor(max_workers=min(len(metaprofile_args), args.max_cores // threads_for_meta)) as executor:
+    # Ensure at least 1 worker is used
+    num_workers = max(1, min(len(metaprofile_args), args.max_cores // threads_for_meta))
+    with ProcessPoolExecutor(max_workers=num_workers) as executor:
         results = list(executor.map(generate_metaprofile, metaprofile_args))
     
     elapsed_time = time.time() - start_time

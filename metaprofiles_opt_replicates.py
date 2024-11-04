@@ -139,8 +139,8 @@ def main(args):
     # Process tissues
     tissues = ['Neuron', 'NSC'] if not args.test_run else ['Neuron']
     deseq_files = {
-        'Neuron': 'DEA_NEU.csv',
-        'NSC': 'DEA_NSC.csv'
+        'Neuron': './DATA/DEA_NEU.csv',
+        'NSC': './DATA/DEA_NSC.csv'
     }
     
     # Calculate threads per job based on available cores and concurrent jobs

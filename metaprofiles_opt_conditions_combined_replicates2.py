@@ -1,3 +1,47 @@
+"""
+This is a bioinformatics pipeline script designed to generate and visualize gene expression metaprofiles by comparing endogenous and exogenous conditions across different tissues (Neurons and NSCs - Neural Stem Cells). Here's a breakdown of its main functions:
+
+Data Processing:
+
+Takes input from BAM files (genomic alignment data)
+Uses sample sheets for both endogenous and exogenous conditions
+Processes DESeq2 results to identify up-regulated, down-regulated, and non-regulated genes
+Converts BAM files to BigWig format with RPKM normalization
+
+
+File Handling:
+
+Works with compressed GTF (Gene Transfer Format) files
+Creates BED files for different gene categories (up/down/non-regulated)
+Manages file conversions and temporary files
+Reuses existing BigWig files when available
+
+
+Metaprofile Generation:
+
+Creates separate profiles for each tissue type (Neuron and NSC)
+Analyzes three categories of genes: up-regulated, down-regulated, and non-regulated
+Generates matrices using computeMatrix from deepTools
+Creates visualization plots showing gene expression profiles
+Includes regions 5000 base pairs before and after genes
+
+
+Visualization Features:
+
+Generates plots with different colors for endogenous (red) and exogenous (blue) conditions
+Labels samples appropriately based on their replicate numbers
+Shows gene regions from TSS (Transcription Start Site) to TES (Transcription End Site)
+Includes proper legends and axis labels
+
+
+Performance Optimization:
+
+Uses parallel processing with both ProcessPoolExecutor and ThreadPoolExecutor
+Automatically manages computational resources
+Includes checkpoints to avoid regenerating existing files
+Handles multiple samples concurrently with configurable core usage
+"""
+
 import argparse
 import pandas as pd
 import numpy as np
@@ -96,99 +140,69 @@ def generate_metaprofile(args):
     matrix_dir = os.path.join(output_dir, "matrix_dir")
     os.makedirs(matrix_dir, exist_ok=True)
     
-    # Define matrix files for endogenous and exogenous samples
-    matrix_endo = os.path.join(matrix_dir, f"{tissue}_Endogenous_{category}_combined_matrix.gz")
-    matrix_exo = os.path.join(matrix_dir, f"{tissue}_Exogenous_{category}_combined_matrix.gz")
+    # Define final matrix and profile files
+    final_matrix = os.path.join(matrix_dir, f"{tissue}_{category}_combined_matrix.gz")
     profile_file = os.path.join(output_dir, f"{tissue}_{category}_profile.png")
     
-    # Generate matrices if they don't exist
-    matrices_to_generate = [
-        (matrix_endo, bigwigs_endo, "Endogenous"),
-        (matrix_exo, bigwigs_exo, "Exogenous")
-    ]
-    
-    for matrix_file, bigwigs, condition in matrices_to_generate:
-        if not os.path.exists(matrix_file):
-            logging.info(f"Generating matrix for {tissue}_{category} ({condition})")
-            logging.info(f"Using bigwig files: {bigwigs}")
-            
-            # First generate individual matrices
-            temp_matrices = []
-            for i, bw in enumerate(bigwigs):
-                temp_matrix = os.path.join(matrix_dir, f"temp_{tissue}_{condition}_{category}_rep{i+1}.gz")
-                temp_matrices.append(temp_matrix)
-                
-                cmd = f"""
-                computeMatrix scale-regions \
-                    -S {bw} \
-                    -R {bed_file} \
-                    -b 5000 -a 5000 \
-                    --regionBodyLength 5000 \
-                    --skipZeros \
-                    --numberOfProcessors {threads_per_job} \
-                    -o {temp_matrix}
-                """
-                try:
-                    subprocess.run(cmd, shell=True, check=True)
-                except subprocess.CalledProcessError as e:
-                    logging.error(f"Error generating matrix for {bw}: {str(e)}")
-                    return None
-            
-            # Then combine them with mean operation
-            combine_cmd = f"""
-            computeMatrixOperations rbind \
-                -m {' '.join(temp_matrices)} \
-                -o {matrix_file}
+    # Generate matrix if it doesn't exist
+    if not os.path.exists(final_matrix):
+        logging.info(f"Generating matrix for {tissue}_{category}")
+        
+        # Generate matrix for tissue-specific samples only
+        all_bigwigs = bigwigs_endo + bigwigs_exo
+        
+        # Create temporary file with list of bigwig files
+        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as tmp:
+            tmp.write('\n'.join(all_bigwigs))
+            bigwig_list = tmp.name
+        
+        try:
+            cmd = f"""
+            computeMatrix scale-regions \
+                --scoreFileName {bigwig_list} \
+                -R {bed_file} \
+                -b 5000 -a 5000 \
+                --regionBodyLength 5000 \
+                --skipZeros \
+                --numberOfProcessors {threads_per_job} \
+                --missingDataAsZero \
+                -o {final_matrix}
             """
-            
-            try:
-                subprocess.run(combine_cmd, shell=True, check=True)
-                
-                # Clean up temporary matrices
-                for temp_matrix in temp_matrices:
-                    if os.path.exists(temp_matrix):
-                        os.remove(temp_matrix)
-                        
-            except subprocess.CalledProcessError as e:
-                logging.error(f"Error combining matrices: {str(e)}")
-                return None
-            
-    # Generate combined plot if needed
+            subprocess.run(cmd, shell=True, check=True)
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Error generating matrix for {tissue}_{category}: {str(e)}")
+            logging.error(f"Command was: {cmd}")
+            return None
+        finally:
+            os.unlink(bigwig_list)
+    
+    # Generate plot if needed
     if not os.path.exists(profile_file):
         logging.info(f"Generating profile plot for {tissue}_{category}")
         
         try:
-            subprocess.run(combine_cmd, shell=True, check=True)
+            # Create temporary files for labels and colors
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='_labels.txt') as labels_file:
+                # Generate labels
+                endo_labels = [f"Endogenous_{Path(bw).stem.split('M')[1].split('_')[0]}" 
+                             for bw in bigwigs_endo]
+                exo_labels = [f"Exogenous_{Path(bw).stem.split('V')[1].split('_')[0]}" 
+                             for bw in bigwigs_exo]
+                labels_file.write('\n'.join(endo_labels + exo_labels))
+                labels_path = labels_file.name
             
-            # Get number of samples in each condition
-            n_endo = len(bigwigs_endo)
-            n_exo = len(bigwigs_exo)
-            
-            # Create labels based on actual replicate numbers from filenames
-            endo_labels = []
-            for bw in bigwigs_endo:
-                rep_num = re.search(r'M(\d+)', Path(bw).stem).group(1)
-                endo_labels.append(f"Endogenous_{rep_num}")
-                
-            exo_labels = []
-            for bw in bigwigs_exo:
-                rep_num = re.search(r'[Vv](\d+)', Path(bw).stem).group(1)
-                exo_labels.append(f"Exogenous_{rep_num}")
-            
-            sample_labels = endo_labels + exo_labels
-            
-            # Create colors
-            colors = ['red'] * n_endo + ['blue'] * n_exo
-            colors_str = ' '.join(colors)
-            
-            plot_cmd = f"""
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='_colors.txt') as colors_file:
+                colors = ['red'] * len(bigwigs_endo) + ['blue'] * len(bigwigs_exo)
+                colors_file.write('\n'.join(colors))
+                colors_path = colors_file.name
+            # Create plotProfile command
+            cmd = f"""
             plotProfile \
-                -m {combined_matrix} \
-                --perGroup \
+                -m {final_matrix} \
                 --plotTitle "{tissue} {category}-regulated genes" \
                 --legendLocation "upper-right" \
-                --samplesLabel {' '.join(sample_labels)} \
-                --colors {colors_str} \
+                --samplesLabel $(cat {labels_path}) \
+                --colors $(cat {colors_path}) \
                 --regionsLabel "Genes" \
                 --startLabel "TSS" \
                 --endLabel "TES" \
@@ -197,19 +211,20 @@ def generate_metaprofile(args):
                 -o {profile_file}
             """
             
-            logging.info(f"Using labels: {sample_labels}")
-            subprocess.run(plot_cmd, shell=True, check=True)
-            
-            # Clean up temporary combined matrix
-            if os.path.exists(combined_matrix):
-                os.remove(combined_matrix)
+            logging.info(f"Using labels: {endo_labels + exo_labels}")
+            subprocess.run(cmd, shell=True, check=True, executable='/bin/bash')
             
         except subprocess.CalledProcessError as e:
-            logging.error(f"Error generating plot: {e}")
-            logging.error(f"Command was: {plot_cmd}")
+            logging.error(f"Error generating plot for {tissue}_{category}: {str(e)}")
+            logging.error(f"Command was: {cmd}")
             return None
+        finally:
+            # Clean up temporary files
+            for f in [labels_path, colors_path]:
+                if os.path.exists(f):
+                    os.unlink(f)
 
-    return [matrix_endo, matrix_exo], profile_file
+    return final_matrix, profile_file
 
 def main(args):
     setup_logging()

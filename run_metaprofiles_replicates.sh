@@ -15,9 +15,9 @@ conda activate jupyter_nb
 
 Full run with 32 cores
 python metaprofiles_opt_replicates.py \
-    --gtf-file gencode.vM10.annotation.gtf.gz \
-    --sample-sheet EXOGENOUS_sample_sheet.csv \
-    --genome-size-file mm10.chrom.sizes \
+    --gtf-file ./DATA/gencode.vM10.annotation.gtf.gz \
+    --sample-sheet ./DATA/EXOGENOUS_sample_sheet.csv \
+    --genome-size-file ./DATA/mm10.chrom.sizes \
     --output-dir metaprofile_results_opt_replicates \
     --max-cores 32
 
