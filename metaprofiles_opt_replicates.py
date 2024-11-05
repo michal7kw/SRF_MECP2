@@ -79,8 +79,10 @@ def bam_to_bigwig(args):
         subprocess.run(f"""
             bamCoverage -b {sorted_bam} \
                 -o {output_bw} \
-                --binSize 10 \
-                --normalizeUsing RPKM \
+                --binSize 50 \
+                --normalizeUsing CPM \
+                --centerReads \
+                --extendReads \
                 --numberOfProcessors {threads_per_job}
         """, shell=True, check=True)
     
@@ -104,10 +106,11 @@ def generate_metaprofile(args):
     # Generate matrix only if it doesn't exist
     if not os.path.exists(matrix_file):
         cmd_matrix = f"""
-        computeMatrix scale-regions -S {' '.join(bigwigs)} \
+        computeMatrix reference-point \
+            -S {' '.join(bigwigs)} \
             -R {bed_file} \
             -b 5000 -a 5000 \
-            --regionBodyLength 5000 \
+            --referencePoint TSS \
             --skipZeros \
             --numberOfProcessors {threads_per_job} \
             -o {matrix_file}
