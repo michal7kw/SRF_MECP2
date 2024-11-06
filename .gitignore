@@ -18,3 +18,6 @@ metaprofiles_conditions.done
 *.png
 
 DATA/wetransfer_cpg_islands-bed_2024-10-31_1228.zip
+archive/
+DATA/wetransfer_cpg_islands-bed_2024-10-31_1228.zip
+*.zip
