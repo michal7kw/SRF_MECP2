@@ -15,7 +15,7 @@ metaprofiles_conditions.done
 *.gff
 *.err
 *.out
-*.png
+# *.png
 
 DATA/wetransfer_cpg_islands-bed_2024-10-31_1228.zip
 archive/
